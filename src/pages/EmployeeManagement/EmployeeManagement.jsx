@@ -43,6 +43,7 @@ const EmployeeManagement = () => {
     error,
     selectedEmployee,
     searchLoading,
+    searchResult,
     searchError,
     mutationLoading,
   } = useSelector((state) => state.employee);
@@ -164,15 +165,15 @@ const EmployeeManagement = () => {
 
   const query = searchQuery.trim();
 
-  const displayedEmployees = !query
-    ? employees
-    : /^\d+$/.test(query)
-      ? selectedEmployee
-        ? [selectedEmployee]
+  const displayedEmployees = query
+    ? /^\d+$/.test(query)
+      ? searchResult
+        ? [searchResult]
         : []
       : employees.filter((employee) =>
           employee.name?.toLowerCase().includes(query.toLowerCase()),
-        );
+        )
+    : employees;
 
   const handleSearch = (value) => {
     setSearchQuery(value);
@@ -292,10 +293,10 @@ const EmployeeManagement = () => {
                       <TableCell colSpan={5} className="p-0">
                         <div className="flex h-[160px] w-full items-center justify-center">
                           <p className="text-sm text-gray-500">
-                            {searchError
-                              ? searchError
-                              : searchQuery.trim()
-                                ? `No employee found for id or name "${searchQuery.trim()}"`
+                            {searchLoading
+                              ? 'Searching employee...'
+                              : query
+                                ? `No employee found for id or name "${query}"`
                                 : 'No employees available.'}
                           </p>
                         </div>

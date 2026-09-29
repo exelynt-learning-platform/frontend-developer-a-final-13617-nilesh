@@ -17,6 +17,7 @@ const initialState = {
   error: null,
 
   // Search
+  searchResult: null,
   searchLoading: false,
   searchError: null,
 
@@ -33,6 +34,7 @@ const employeeSlice = createSlice({
   reducers: {
     clearSelectedEmployee: (state) => {
       state.selectedEmployee = null;
+      state.searchResult = null;
       state.searchError = null;
     },
 
@@ -73,18 +75,18 @@ const employeeSlice = createSlice({
       .addCase(fetchEmployeeById.pending, (state) => {
         state.searchLoading = true;
         state.searchError = null;
-        state.selectedEmployee = null;
+        state.searchResult = null;
       })
 
       .addCase(fetchEmployeeById.fulfilled, (state, action) => {
         state.searchLoading = false;
         state.searchError = null;
-        state.selectedEmployee = action.payload;
+        state.searchResult = action.payload;
       })
 
       .addCase(fetchEmployeeById.rejected, (state, action) => {
         state.searchLoading = false;
-        state.selectedEmployee = null;
+        state.searchResult = null;
         state.searchError = action.payload || 'Employee not found.';
       });
 
@@ -175,4 +177,3 @@ export const {
 } = employeeSlice.actions;
 
 export default employeeSlice.reducer;
-
