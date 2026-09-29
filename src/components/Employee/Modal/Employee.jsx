@@ -167,7 +167,9 @@ const Employee = ({
       const employeeState = employee.state || '';
 
       const selectedState = countryStates.find(
-        (state) => state.isoCode.toLowerCase() === employeeState.toLowerCase(),
+        (state) =>
+          state.isoCode.toLowerCase() === employeeState.toLowerCase() ||
+          state.name.toLowerCase() === employeeState.toLowerCase(),
       );
 
       const stateCode = selectedState?.isoCode || '';

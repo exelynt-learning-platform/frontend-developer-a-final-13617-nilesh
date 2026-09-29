@@ -33,13 +33,13 @@ export const validateEmployeeForm = (formData) => {
     errors.country = 'Country is required';
   }
 
-  if (!formData.state) {
-    errors.state = 'State is required';
-  }
+  // if (!formData.state) {
+  //   errors.state = 'State is required';
+  // }
 
-  if (!formData.district) {
-    errors.district = 'District is required';
-  }
+  // if (!formData.district) {
+  //   errors.district = 'District is required';
+  // }
 
   return errors;
 };
