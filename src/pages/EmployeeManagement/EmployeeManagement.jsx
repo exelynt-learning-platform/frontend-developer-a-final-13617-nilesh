@@ -292,9 +292,11 @@ const EmployeeManagement = () => {
                       <TableCell colSpan={5} className="p-0">
                         <div className="flex h-[160px] w-full items-center justify-center">
                           <p className="text-sm text-gray-500">
-                            {query
-                              ? `No employee found for id or name "${query}"`
-                              : 'No employees available.'}
+                            {searchError
+                              ? searchError
+                              : searchQuery.trim()
+                                ? `No employee found for id or name "${searchQuery.trim()}"`
+                                : 'No employees available.'}
                           </p>
                         </div>
                       </TableCell>
