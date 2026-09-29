@@ -58,7 +58,7 @@ const EmployeeManagement = () => {
   } = useModal();
 
   const [employeeToDelete, setEmployeeToDelete] = useState(null);
-
+  const [employeeForEdit, setEmployeeForEdit] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -80,19 +80,19 @@ const EmployeeManagement = () => {
 
   const handleOpenAdd = () => {
     dispatch(clearMutationError());
-    dispatch(clearSelectedEmployee());
 
+    setEmployeeForEdit(null);
     setMode('add');
     openModal();
   };
-  
 
   const handleOpenEdit = async (employee) => {
     dispatch(clearMutationError());
 
     try {
-      await dispatch(fetchEmployeeById(employee.id)).unwrap();
+      const result = await dispatch(fetchEmployeeById(employee.id)).unwrap();
 
+      setEmployeeForEdit(result);
       setMode('edit');
       openModal();
     } catch (error) {
@@ -104,8 +104,8 @@ const EmployeeManagement = () => {
     if (mutationLoading) return;
 
     dispatch(clearMutationError());
-    dispatch(clearSelectedEmployee());
 
+    setEmployeeForEdit(null);
     setMode('add');
     closeModal();
   };
@@ -117,11 +117,11 @@ const EmployeeManagement = () => {
 
         toast.success('Employee added successfully.');
       } else {
-        if (!selectedEmployee?.id) return;
+        if (!employeeForEdit?.id) return;
 
         await dispatch(
           editEmployee({
-            id: selectedEmployee.id,
+            id: employeeForEdit.id,
             payload: formData,
           }),
         ).unwrap();
@@ -397,7 +397,7 @@ const EmployeeManagement = () => {
         isOpen={isOpen}
         onClose={handleCloseEmployee}
         mode={mode}
-        employee={selectedEmployee}
+        employee={employeeForEdit}
         onSubmit={handleEmployeeSubmit}
         loading={mutationLoading}
         countries={countries}
