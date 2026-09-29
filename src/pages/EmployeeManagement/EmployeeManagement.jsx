@@ -85,6 +85,7 @@ const EmployeeManagement = () => {
     setMode('add');
     openModal();
   };
+  
 
   const handleOpenEdit = async (employee) => {
     dispatch(clearMutationError());
