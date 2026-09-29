@@ -80,18 +80,22 @@ const Employee = ({
     }));
   };
 
-  const handleStateChange = (stateCode = '') => {
-    const countryCode = getCountryCode(formData.country || '');
+  const handleStateChange = (stateName) => {
+    const countryCode = getCountryCode(formData.country);
 
-    const stateDistricts = stateCode
-      ? City.getCitiesOfState(countryCode, stateCode)
+    const selectedState = State.getStatesOfCountry(countryCode).find(
+      (state) => state.name === stateName,
+    );
+
+    const stateDistricts = selectedState
+      ? City.getCitiesOfState(countryCode, selectedState.isoCode)
       : [];
 
     setDistricts(stateDistricts);
 
     setFormData((prev) => ({
       ...prev,
-      state: stateCode,
+      state: stateName,
       district: '',
     }));
 
@@ -137,7 +141,7 @@ const Employee = ({
   ];
 
   const stateOptions = states.map((state) => ({
-    value: state.isoCode,
+    value: state.name,
     label: state.name,
   }));
 
@@ -150,7 +154,15 @@ const Employee = ({
     if (!isOpen) return;
 
     if (mode === 'add') {
-      setFormData(initialFormData);
+      setFormData({ ...initialFormData });
+      setStates([]);
+      setDistricts([]);
+      setErrors({});
+      return;
+    }
+
+    if (mode === 'edit' && !employee) {
+      setFormData({ ...initialFormData });
       setStates([]);
       setDistricts([]);
       setErrors({});
@@ -170,8 +182,8 @@ const Employee = ({
 
       const selectedState = countryStates.find(
         (state) =>
-          state.isoCode.toLowerCase() === employeeState.toLowerCase() ||
-          state.name.toLowerCase() === employeeState.toLowerCase(),
+          state.name.toLowerCase() === employeeState.toLowerCase() ||
+          state.isoCode.toLowerCase() === employeeState.toLowerCase(),
       );
 
       const stateCode = selectedState?.isoCode || '';
@@ -193,7 +205,7 @@ const Employee = ({
         email: employee.email || employee.emailId || '',
         mobile: employee.mobile || '',
         country: countryName,
-        state: stateCode,
+        state: selectedState?.name || '',
         district: selectedDistrict?.name || '',
       });
 

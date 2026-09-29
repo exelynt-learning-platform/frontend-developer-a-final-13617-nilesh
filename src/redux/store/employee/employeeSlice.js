@@ -50,7 +50,6 @@ const employeeSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-
     // GET ALL EMPLOYEES
     builder
       .addCase(fetchEmployees.pending, (state) => {
@@ -122,14 +121,14 @@ const employeeSlice = createSlice({
         const updatedEmployee = action.payload;
 
         const employeeIndex = state.employees.findIndex(
-          (employee) => employee.id === updatedEmployee.id,
+          (employee) => String(employee.id) === String(updatedEmployee.id),
         );
 
         if (employeeIndex !== -1) {
           state.employees[employeeIndex] = updatedEmployee;
         }
 
-        if (state.selectedEmployee?.id === updatedEmployee.id) {
+        if (String(state.selectedEmployee?.id) === String(updatedEmployee.id)) {
           state.selectedEmployee = updatedEmployee;
         }
       })
@@ -153,10 +152,10 @@ const employeeSlice = createSlice({
         const deletedId = action.payload;
 
         state.employees = state.employees.filter(
-          (employee) => employee.id !== deletedId,
+          (employee) => String(employee.id) !== String(deletedId),
         );
 
-        if (state.selectedEmployee?.id === deletedId) {
+        if (String(state.selectedEmployee?.id) === String(deletedId)) {
           state.selectedEmployee = null;
         }
       })
