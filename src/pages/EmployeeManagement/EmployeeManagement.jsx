@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useModal } from '@src/hooks/useModal';
-
+import { getSafeErrorMessage } from '@src/utils/errorMessage';
 import SearchInput from '@src/components/form/input/SearchInput';
 import Button from '@src/utils/ui/button/Button';
 import {
@@ -64,11 +64,7 @@ const EmployeeManagement = () => {
     dispatch(fetchEmployees())
       .unwrap()
       .catch((error) => {
-        toast.error(
-          typeof error === 'string'
-            ? error
-            : 'Unable to fetch employees. Please try again.',
-        );
+        toast.error(getSafeErrorMessage(error));
       });
 
     dispatch(fetchCountries());
@@ -128,13 +124,7 @@ const EmployeeManagement = () => {
     } catch (error) {
       console.error(`${mode} employee failed:`, error);
 
-      toast.error(
-        typeof error === 'string'
-          ? error
-          : mode === 'add'
-            ? 'Failed to add employee. Please try again.'
-            : 'Failed to update employee. Please try again.',
-      );
+      toast.error(getSafeErrorMessage(error));
     }
   };
 
@@ -162,11 +152,7 @@ const EmployeeManagement = () => {
     } catch (error) {
       console.error('Delete employee failed:', error);
 
-      toast.error(
-        typeof error === 'string'
-          ? error
-          : 'Failed to delete employee. Please try again.',
-      );
+      toast.error(getSafeErrorMessage(error));
     }
   };
 
