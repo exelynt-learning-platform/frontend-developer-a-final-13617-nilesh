@@ -185,6 +185,7 @@ const EmployeeManagement = () => {
     if (!query) {
       return employees;
     }
+    
 
     if (isIdSearch) {
       return searchResult ? [searchResult] : [];
