@@ -80,10 +80,12 @@ const Employee = ({
     }));
   };
 
-  const handleStateChange = (stateCode) => {
-    const countryCode = getCountryCode(formData.country);
+  const handleStateChange = (stateCode = '') => {
+    const countryCode = getCountryCode(formData.country || '');
 
-    const stateDistricts = City.getCitiesOfState(countryCode, stateCode);
+    const stateDistricts = stateCode
+      ? City.getCitiesOfState(countryCode, stateCode)
+      : [];
 
     setDistricts(stateDistricts);
 
@@ -197,7 +199,7 @@ const Employee = ({
 
       setErrors({});
     }
-  }, [isOpen, mode, employee]);
+  }, [isOpen, mode, employee?.id]);
 
   return (
     <Modal
