@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Modal } from '@src/utils/ui/modal';
 import Button from '@src/utils/ui/button/Button';
 import DeleteIcon from '@src/components/icons/DeleteIcon.jsx';
