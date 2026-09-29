@@ -278,9 +278,7 @@ const Employee = ({
                 placeholder="Enter mobile number"
                 value={formData.mobile}
                 onChange={(value) => handleChange('mobile', value || '')}
-                className={`phone-input ${
-                  errors.mobile ? 'phone-input-error' : ''
-                }`}
+                className={errors.mobile ? 'phone-input error' : 'phone-input'}
               />
 
               {errors.mobile && (

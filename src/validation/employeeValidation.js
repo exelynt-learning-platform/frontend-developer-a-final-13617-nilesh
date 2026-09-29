@@ -1,3 +1,5 @@
+import { isValidPhoneNumber } from 'libphonenumber-js';
+
 export const validateEmployeeForm = (formData = {}) => {
   const errors = {};
 
@@ -26,8 +28,8 @@ export const validateEmployeeForm = (formData = {}) => {
 
   if (!mobile) {
     errors.mobile = 'Mobile number is required';
-  } else if (!/^\d{10}$/.test(mobile)) {
-    errors.mobile = 'Mobile number must be 10 digits';
+  } else if (!isValidPhoneNumber(mobile)) {
+    errors.mobile = 'Enter a valid mobile number';
   }
 
   if (!country) {
