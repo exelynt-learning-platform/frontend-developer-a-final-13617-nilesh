@@ -176,6 +176,7 @@ const EmployeeManagement = () => {
       : employees.filter((employee) =>
           employee.name?.toLowerCase().includes(query.toLowerCase()),
         );
+        
 
   const handleSearch = (value) => {
     setSearchQuery(value);
