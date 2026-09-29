@@ -154,7 +154,7 @@ const Employee = ({
     if (!isOpen) return;
 
     if (mode === 'add') {
-      setFormData({ ...initialFormData });
+      setFormData(initialFormData);
       setStates([]);
       setDistricts([]);
       setErrors({});
@@ -162,7 +162,7 @@ const Employee = ({
     }
 
     if (mode === 'edit' && !employee) {
-      setFormData({ ...initialFormData });
+      setFormData(initialFormData);
       setStates([]);
       setDistricts([]);
       setErrors({});
@@ -171,10 +171,11 @@ const Employee = ({
 
     if (mode === 'edit' && employee) {
       const countryName = employee.country || '';
-
       const countryCode = getCountryCode(countryName);
 
-      const countryStates = State.getStatesOfCountry(countryCode);
+      const countryStates = countryCode
+        ? State.getStatesOfCountry(countryCode)
+        : [];
 
       setStates(countryStates);
 
@@ -182,8 +183,8 @@ const Employee = ({
 
       const selectedState = countryStates.find(
         (state) =>
-          state.name.toLowerCase() === employeeState.toLowerCase() ||
-          state.isoCode.toLowerCase() === employeeState.toLowerCase(),
+          state.isoCode.toLowerCase() === employeeState.toLowerCase() ||
+          state.name.toLowerCase() === employeeState.toLowerCase(),
       );
 
       const stateCode = selectedState?.isoCode || '';
@@ -194,10 +195,11 @@ const Employee = ({
 
       setDistricts(stateDistricts);
 
+      const employeeDistrict = employee.district || '';
+
       const selectedDistrict = stateDistricts.find(
         (district) =>
-          district.name.toLowerCase() ===
-          (employee.district || '').toLowerCase(),
+          district.name.toLowerCase() === employeeDistrict.toLowerCase(),
       );
 
       setFormData({
@@ -205,13 +207,13 @@ const Employee = ({
         email: employee.email || employee.emailId || '',
         mobile: employee.mobile || '',
         country: countryName,
-        state: selectedState?.name || '',
-        district: selectedDistrict?.name || '',
+        state: selectedState?.name || employeeState,
+        district: selectedDistrict?.name || employeeDistrict,
       });
 
       setErrors({});
     }
-  }, [isOpen, mode, employee]);
+  }, [isOpen, mode, employee?.id]);
 
   return (
     <Modal

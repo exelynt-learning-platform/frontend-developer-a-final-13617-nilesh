@@ -187,14 +187,25 @@ const EmployeeManagement = () => {
       return;
     }
 
-    if (/^\d+$/.test(query)) {
+    if (!/^\d+$/.test(query)) {
       dispatch(clearEmployeeSearch());
-      dispatch(fetchEmployeeById(query));
+    }
+  };
+
+  useEffect(() => {
+    const query = searchQuery.trim();
+
+    if (!query || !/^\d+$/.test(query)) {
       return;
     }
 
-    dispatch(clearEmployeeSearch());
-  };
+    const timer = setTimeout(() => {
+      dispatch(clearEmployeeSearch());
+      dispatch(fetchEmployeeById(query));
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, dispatch]);
 
   return (
     <>
