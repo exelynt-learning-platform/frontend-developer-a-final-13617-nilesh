@@ -18,16 +18,6 @@ const initialFormData = {
   district: '',
 };
 
-const getCountryCode = (countryName) => {
-  if (!countryName) return '';
-
-  const country = Country.getAllCountries().find(
-    (item) => item.name.toLowerCase() === countryName.toLowerCase(),
-  );
-
-  return country?.isoCode || '';
-};
-
 const Employee = ({
   isOpen,
   onClose,
@@ -83,8 +73,20 @@ const Employee = ({
   const handleStateChange = (stateName) => {
     const countryCode = getCountryCode(formData.country);
 
+    if (!countryCode) {
+      setFormData((prev) => ({
+        ...prev,
+        state: stateName,
+        district: '',
+      }));
+
+      return;
+    }
+
     const selectedState = State.getStatesOfCountry(countryCode).find(
-      (state) => state.name === stateName,
+      (state) =>
+        state.name.toLowerCase() === stateName.toLowerCase() ||
+        state.isoCode.toLowerCase() === stateName.toLowerCase(),
     );
 
     const stateDistricts = selectedState
@@ -95,7 +97,7 @@ const Employee = ({
 
     setFormData((prev) => ({
       ...prev,
-      state: stateName,
+      state: selectedState?.name ?? stateName,
       district: '',
     }));
 
@@ -150,9 +152,26 @@ const Employee = ({
     label: district.name,
   }));
 
+  const getCountryCode = (countryName) => {
+    const normalizedName = String(countryName ?? '')
+      .trim()
+      .toLowerCase();
+
+    if (!normalizedName) return '';
+
+    const country = Country.getAllCountries().find(
+      (item) =>
+        item.name.trim().toLowerCase() === normalizedName ||
+        item.isoCode.trim().toLowerCase() === normalizedName,
+    );
+
+    return country?.isoCode || '';
+  };
+
   useEffect(() => {
     if (!isOpen) return;
 
+    // ADD MODE
     if (mode === 'add') {
       setFormData(initialFormData);
       setStates([]);
@@ -161,59 +180,55 @@ const Employee = ({
       return;
     }
 
-    if (mode === 'edit' && !employee) {
-      setFormData(initialFormData);
-      setStates([]);
-      setDistricts([]);
-      setErrors({});
-      return;
-    }
+    // EDIT MODE
+    if (mode === 'edit') {
+      if (!employee) {
+        setFormData(initialFormData);
+        setStates([]);
+        setDistricts([]);
+        setErrors({});
+        return;
+      }
 
-    if (mode === 'edit' && employee) {
-      const countryName = employee.country || '';
+      const countryName = employee.country ?? '';
+      const stateName = employee.state ?? '';
+      const districtName = employee.district ?? '';
+
       const countryCode = getCountryCode(countryName);
 
+      // Get states for selected country
       const countryStates = countryCode
         ? State.getStatesOfCountry(countryCode)
         : [];
 
-      setStates(countryStates);
-
-      const employeeState = employee.state || '';
-
+      // Find selected state
       const selectedState = countryStates.find(
         (state) =>
-          state.isoCode.toLowerCase() === employeeState.toLowerCase() ||
-          state.name.toLowerCase() === employeeState.toLowerCase(),
+          state.name.toLowerCase() === stateName.toLowerCase() ||
+          state.isoCode.toLowerCase() === stateName.toLowerCase(),
       );
 
-      const stateCode = selectedState?.isoCode || '';
+      // Get districts for selected state
+      const stateDistricts =
+        countryCode && selectedState
+          ? City.getCitiesOfState(countryCode, selectedState.isoCode)
+          : [];
 
-      const stateDistricts = stateCode
-        ? City.getCitiesOfState(countryCode, stateCode)
-        : [];
-
+      setStates(countryStates);
       setDistricts(stateDistricts);
 
-      const employeeDistrict = employee.district || '';
-
-      const selectedDistrict = stateDistricts.find(
-        (district) =>
-          district.name.toLowerCase() === employeeDistrict.toLowerCase(),
-      );
-
       setFormData({
-        name: employee.name || '',
-        email: employee.email || employee.emailId || '',
-        mobile: employee.mobile || '',
+        name: employee.name ?? '',
+        email: employee.email ?? '',
+        mobile: employee.mobile ?? '',
         country: countryName,
-        state: selectedState?.name || employeeState,
-        district: selectedDistrict?.name || employeeDistrict,
+        state: selectedState?.name ?? stateName,
+        district: districtName,
       });
 
       setErrors({});
     }
-  }, [isOpen, mode, employee?.id]);
+  }, [isOpen, mode, employee]);
 
   return (
     <Modal

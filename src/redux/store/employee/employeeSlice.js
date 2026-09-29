@@ -81,18 +81,25 @@ const employeeSlice = createSlice({
       .addCase(fetchEmployeeById.pending, (state) => {
         state.searchLoading = true;
         state.searchError = null;
+
         state.searchResult = null;
+        state.selectedEmployee = null;
       })
 
       .addCase(fetchEmployeeById.fulfilled, (state, action) => {
         state.searchLoading = false;
         state.searchError = null;
+
         state.searchResult = action.payload;
+        state.selectedEmployee = action.payload;
       })
 
       .addCase(fetchEmployeeById.rejected, (state, action) => {
         state.searchLoading = false;
+
         state.searchResult = null;
+        state.selectedEmployee = null; 
+
         state.searchError =
           action.payload || 'Unable to search employee. Please try again.';
       });
