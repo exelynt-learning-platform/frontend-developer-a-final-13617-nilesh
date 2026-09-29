@@ -1,0 +1,178 @@
+import { createSlice } from '@reduxjs/toolkit';
+
+import {
+  fetchEmployees,
+  fetchEmployeeById,
+  addEmployee,
+  editEmployee,
+  removeEmployee,
+} from './employeeThunks';
+
+const initialState = {
+  employees: [],
+  selectedEmployee: null,
+
+  // Employee list
+  loading: false,
+  error: null,
+
+  // Search
+  searchLoading: false,
+  searchError: null,
+
+  // Add / Edit / Delete
+  mutationLoading: false,
+  mutationError: null,
+};
+
+const employeeSlice = createSlice({
+  name: 'employee',
+
+  initialState,
+
+  reducers: {
+    clearSelectedEmployee: (state) => {
+      state.selectedEmployee = null;
+      state.searchError = null;
+    },
+
+    clearEmployeeError: (state) => {
+      state.error = null;
+    },
+
+    clearSearchError: (state) => {
+      state.searchError = null;
+    },
+
+    clearMutationError: (state) => {
+      state.mutationError = null;
+    },
+  },
+
+  extraReducers: (builder) => {
+
+    // GET ALL EMPLOYEES
+    builder
+      .addCase(fetchEmployees.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchEmployees.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.employees = action.payload;
+      })
+
+      .addCase(fetchEmployees.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch employees.';
+      });
+
+    // GET EMPLOYEE BY ID
+    builder
+      .addCase(fetchEmployeeById.pending, (state) => {
+        state.searchLoading = true;
+        state.searchError = null;
+        state.selectedEmployee = null;
+      })
+
+      .addCase(fetchEmployeeById.fulfilled, (state, action) => {
+        state.searchLoading = false;
+        state.searchError = null;
+        state.selectedEmployee = action.payload;
+      })
+
+      .addCase(fetchEmployeeById.rejected, (state, action) => {
+        state.searchLoading = false;
+        state.selectedEmployee = null;
+        state.searchError = action.payload || 'Employee not found.';
+      });
+
+    // ADD EMPLOYEE
+    builder
+      .addCase(addEmployee.pending, (state) => {
+        state.mutationLoading = true;
+        state.mutationError = null;
+      })
+
+      .addCase(addEmployee.fulfilled, (state, action) => {
+        state.mutationLoading = false;
+        state.mutationError = null;
+
+        state.employees.push(action.payload);
+      })
+
+      .addCase(addEmployee.rejected, (state, action) => {
+        state.mutationLoading = false;
+        state.mutationError = action.payload || 'Failed to add employee.';
+      });
+
+    // UPDATE EMPLOYEE
+    builder
+      .addCase(editEmployee.pending, (state) => {
+        state.mutationLoading = true;
+        state.mutationError = null;
+      })
+
+      .addCase(editEmployee.fulfilled, (state, action) => {
+        state.mutationLoading = false;
+        state.mutationError = null;
+
+        const updatedEmployee = action.payload;
+
+        const employeeIndex = state.employees.findIndex(
+          (employee) => employee.id === updatedEmployee.id,
+        );
+
+        if (employeeIndex !== -1) {
+          state.employees[employeeIndex] = updatedEmployee;
+        }
+
+        if (state.selectedEmployee?.id === updatedEmployee.id) {
+          state.selectedEmployee = updatedEmployee;
+        }
+      })
+
+      .addCase(editEmployee.rejected, (state, action) => {
+        state.mutationLoading = false;
+        state.mutationError = action.payload || 'Failed to update employee.';
+      });
+
+    // DELETE EMPLOYEE
+    builder
+      .addCase(removeEmployee.pending, (state) => {
+        state.mutationLoading = true;
+        state.mutationError = null;
+      })
+
+      .addCase(removeEmployee.fulfilled, (state, action) => {
+        state.mutationLoading = false;
+        state.mutationError = null;
+
+        const deletedId = action.payload;
+
+        state.employees = state.employees.filter(
+          (employee) => employee.id !== deletedId,
+        );
+
+        if (state.selectedEmployee?.id === deletedId) {
+          state.selectedEmployee = null;
+        }
+      })
+
+      .addCase(removeEmployee.rejected, (state, action) => {
+        state.mutationLoading = false;
+        state.mutationError = action.payload || 'Failed to delete employee.';
+      });
+  },
+});
+
+export const {
+  clearSelectedEmployee,
+  clearEmployeeError,
+  clearSearchError,
+  clearMutationError,
+} = employeeSlice.actions;
+
+export default employeeSlice.reducer;
