@@ -199,7 +199,7 @@ const Employee = ({
 
       setErrors({});
     }
-  }, [isOpen, mode, employee?.id]);
+  }, [isOpen, mode, employee]);
 
   return (
     <Modal
