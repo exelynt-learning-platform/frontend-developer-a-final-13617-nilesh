@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import NetworkLost from '/assets/images/offline-image/Internet-connection-lost-page.webp';
+import NetworkLost from '@src/assets/images/offline-image/Internet-connection-lost-page.webp';
 
 export const OfflineScreen = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
