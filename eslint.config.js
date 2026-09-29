@@ -39,7 +39,6 @@ export default [
       'jsx-a11y/no-static-element-interactions': 'off',
       'jsx-a11y/click-events-have-key-events': 'off',
       'react-hooks/exhaustive-deps': 'off',
-      'no-unused-disable': 'off',
       'no-undef': 'off',
       // Disallow console.log, console.warn, etc.
       'no-console': ['error', { allow: ['warn', 'error'] }],

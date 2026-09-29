@@ -67,7 +67,7 @@ const DeleteEmployeeModal = ({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className="w-full !bg-[#D92D20] !hover:bg-[#B42318] sm:w-auto"
+            className="w-full !bg-[#D92D20] hover:!bg-[#B42318] sm:w-auto"
           >
             {loading ? 'Deleting...' : 'Delete'}
           </Button>

@@ -18,17 +18,14 @@ const initialFormData = {
   district: '',
 };
 
-const countryCodeMap = new Map(
-  Country.getAllCountries().map((country) => [
-    country.name.toLowerCase(),
-    country.isoCode,
-  ]),
-);
-
 const getCountryCode = (countryName) => {
   if (!countryName) return '';
 
-  return countryCodeMap.get(countryName.trim().toLowerCase()) || '';
+  const country = Country.getAllCountries().find(
+    (item) => item.name.toLowerCase() === countryName.toLowerCase(),
+  );
+
+  return country?.isoCode || '';
 };
 
 const Employee = ({
@@ -62,30 +59,10 @@ const Employee = ({
   const handleCountryChange = (countryName) => {
     const countryCode = getCountryCode(countryName);
 
-    if (!countryCode) {
-      setStates([]);
-      setDistricts([]);
-
-      setFormData((prev) => ({
-        ...prev,
-        country: countryName,
-        state: '',
-        district: '',
-      }));
-
-      setErrors((prev) => ({
-        ...prev,
-        country: 'Selected country is not recognized.',
-        state: '',
-        district: '',
-      }));
-
-      return;
-    }
-
     const countryStates = State.getStatesOfCountry(countryCode);
 
     setStates(countryStates);
+
     setDistricts([]);
 
     setFormData((prev) => ({
