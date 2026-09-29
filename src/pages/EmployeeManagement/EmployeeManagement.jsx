@@ -68,7 +68,14 @@ const EmployeeManagement = () => {
         toast.error(getSafeErrorMessage(error));
       });
 
-    dispatch(fetchCountries());
+    dispatch(fetchCountries())
+      .unwrap()
+      .catch((error) => {
+        toast.error(
+          getSafeErrorMessage(error) ||
+            'Failed to load countries. Please try again.',
+        );
+      });
   }, [dispatch]);
 
   const handleOpenAdd = () => {
@@ -88,10 +95,9 @@ const EmployeeManagement = () => {
       setMode('edit');
       openModal();
     } catch (error) {
-      console.error('Failed to fetch employee:', error);
+      toast.error(getSafeErrorMessage(error));
     }
   };
-  
 
   const handleCloseEmployee = () => {
     if (mutationLoading) return;
@@ -177,6 +183,14 @@ const EmployeeManagement = () => {
       : employees.filter((employee) =>
           employee.name?.toLowerCase().includes(query.toLowerCase()),
         );
+
+  let emptyStateMessage = 'No employees available.';
+
+  if (searchLoading) {
+    emptyStateMessage = 'Searching...';
+  } else if (searchQuery.trim()) {
+    emptyStateMessage = `No employee found for id or name "${searchQuery.trim()}"`;
+  }
 
   const handleSearch = (value) => {
     setSearchQuery(value);
@@ -309,13 +323,7 @@ const EmployeeManagement = () => {
                       <TableCell colSpan={5} className="p-0">
                         <div className="flex h-[160px] w-full items-center justify-center">
                           <p className="text-sm text-gray-500">
-                            {searchLoading
-                              ? 'Searching employee...'
-                              : searchError
-                                ? searchError
-                                : searchQuery.trim()
-                                  ? `No employee found for id or name "${searchQuery.trim()}"`
-                                  : 'No employees available.'}
+                            {emptyStateMessage}
                           </p>
                         </div>
                       </TableCell>
@@ -384,6 +392,7 @@ const EmployeeManagement = () => {
       </div>
 
       <Employee
+        key={`${mode}-${selectedEmployee?.id ?? 'new'}`}
         isOpen={isOpen}
         onClose={handleCloseEmployee}
         mode={mode}

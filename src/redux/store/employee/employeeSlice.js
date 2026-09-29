@@ -108,7 +108,7 @@ const employeeSlice = createSlice({
         state.mutationLoading = false;
         state.mutationError = null;
 
-        state.employees.push(action.payload);
+        state.employees = [action.payload, ...state.employees];
       })
 
       .addCase(addEmployee.rejected, (state, action) => {
