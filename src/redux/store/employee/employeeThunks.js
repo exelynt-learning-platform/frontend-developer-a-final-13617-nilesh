@@ -35,9 +35,8 @@ export const fetchEmployeeById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.status === 404
-          ? 'Employee not found.'
-          : 'Failed to fetch employee. Please try again.',
+        error.response?.data?.message ||
+          'Unable to search employee. Please try again.',
       );
     }
   },

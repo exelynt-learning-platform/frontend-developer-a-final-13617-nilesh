@@ -87,7 +87,7 @@ const employeeSlice = createSlice({
       .addCase(fetchEmployeeById.rejected, (state, action) => {
         state.searchLoading = false;
         state.searchResult = null;
-        state.searchError = action.payload || 'Employee not found.';
+        state.searchError = action.payload || 'Unable to search employee. Please try again.';
       });
 
     // ADD EMPLOYEE

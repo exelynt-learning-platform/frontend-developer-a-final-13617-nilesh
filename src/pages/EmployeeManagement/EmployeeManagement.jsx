@@ -165,15 +165,17 @@ const EmployeeManagement = () => {
 
   const query = searchQuery.trim();
 
-  const displayedEmployees = query
-    ? /^\d+$/.test(query)
+  const isIdSearch = /^\d+$/.test(query);
+
+  const displayedEmployees = !query
+    ? employees
+    : isIdSearch
       ? searchResult
         ? [searchResult]
         : []
       : employees.filter((employee) =>
           employee.name?.toLowerCase().includes(query.toLowerCase()),
-        )
-    : employees;
+        );
 
   const handleSearch = (value) => {
     setSearchQuery(value);
@@ -295,9 +297,11 @@ const EmployeeManagement = () => {
                           <p className="text-sm text-gray-500">
                             {searchLoading
                               ? 'Searching employee...'
-                              : query
-                                ? `No employee found for id or name "${query}"`
-                                : 'No employees available.'}
+                              : searchError
+                                ? searchError
+                                : searchQuery.trim()
+                                  ? `No employee found for id or name "${searchQuery.trim()}"`
+                                  : 'No employees available.'}
                           </p>
                         </div>
                       </TableCell>
