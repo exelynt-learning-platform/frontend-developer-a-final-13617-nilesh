@@ -8,12 +8,13 @@ export const Modal = ({
   onCloseWithReset,
   showCloseButton = true, // Default to true for backwards compatibility
   isFullscreen = false,
+  disableClose = false,
 }) => {
   const modalRef = useRef(null);
 
   useEffect(() => {
     const handleEscape = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && !disableClose) {
         onClose();
       }
     };

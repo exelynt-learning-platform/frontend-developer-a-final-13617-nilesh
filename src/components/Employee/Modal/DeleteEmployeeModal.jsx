@@ -21,6 +21,7 @@ const DeleteEmployeeModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
+      disableClose={loading}
       className="w-[calc(100%-32px)] max-w-[450px]"
     >
       <div className="p-5 sm:p-6">

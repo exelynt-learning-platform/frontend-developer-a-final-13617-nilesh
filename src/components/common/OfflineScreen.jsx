@@ -2,18 +2,22 @@ import { useEffect, useState } from 'react';
 import NetworkLost from '@src/assets/images/offline-image/Internet-connection-lost-page.webp';
 
 export const OfflineScreen = () => {
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isOffline, setIsOffline] = useState(
+    typeof navigator !== 'undefined' && !navigator.onLine,
+  );
 
   useEffect(() => {
-    const handleOffline = () => setIsOffline(true);
-    const handleOnline = () => setIsOffline(false);
+    if (typeof window === 'undefined') return;
 
-    window.addEventListener('offline', handleOffline);
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
     window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
     return () => {
-      window.removeEventListener('offline', handleOffline);
       window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
   }, []);
 

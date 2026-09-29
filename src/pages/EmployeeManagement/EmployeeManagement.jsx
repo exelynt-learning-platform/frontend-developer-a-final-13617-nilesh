@@ -46,6 +46,7 @@ const EmployeeManagement = () => {
     searchResult,
     searchError,
     mutationLoading,
+    mutationError,
   } = useSelector((state) => state.employee);
 
   const { isOpen, openModal, closeModal } = useModal();
@@ -220,7 +221,9 @@ const EmployeeManagement = () => {
       dispatch(fetchEmployeeById(query));
     }, 400);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [searchQuery, dispatch]);
 
   return (
@@ -235,6 +238,15 @@ const EmployeeManagement = () => {
 
         {/* Employee List */}
         <div className="mt-3 w-full rounded-xl bg-white p-5">
+          {mutationError && (
+            <div
+              role="alert"
+              className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+            >
+              {mutationError}
+            </div>
+          )}
+
           {/* Toolbar */}
           <div className="flex min-h-[40px] w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             {/* Left */}
@@ -404,7 +416,6 @@ const EmployeeManagement = () => {
         countryLoading={countryLoading}
         countryError={countryError}
       />
-
 
       <DeleteEmployeeModal
         isOpen={isDeleteOpen}

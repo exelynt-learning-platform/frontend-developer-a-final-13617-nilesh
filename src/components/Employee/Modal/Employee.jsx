@@ -9,6 +9,18 @@ import Label from '@src/components/form/Label';
 import { validateEmployeeForm } from '@src/validation/employeeValidation.js';
 import { State, City, Country } from 'country-state-city';
 
+const allCountries = Country.getAllCountries();
+
+const getCountryCode = (countryName) => {
+  if (!countryName) return '';
+
+  const country = allCountries.find(
+    (item) => item.name.toLowerCase() === countryName.toLowerCase(),
+  );
+
+  return country?.isoCode || '';
+};
+
 const initialFormData = {
   name: '',
   email: '',
@@ -23,6 +35,7 @@ const Employee = ({
   onClose,
   onSubmit,
   countries = [],
+  countryError = null,
   mode = 'add',
   employee = null,
   loading = false,
@@ -152,22 +165,6 @@ const Employee = ({
     label: district.name,
   }));
 
-  const getCountryCode = (countryName) => {
-    const normalizedName = String(countryName ?? '')
-      .trim()
-      .toLowerCase();
-
-    if (!normalizedName) return '';
-
-    const country = Country.getAllCountries().find(
-      (item) =>
-        item.name.trim().toLowerCase() === normalizedName ||
-        item.isoCode.trim().toLowerCase() === normalizedName,
-    );
-
-    return country?.isoCode || '';
-  };
-
   useEffect(() => {
     if (!isOpen) return;
 
@@ -234,9 +231,19 @@ const Employee = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
+      disableClose={loading}
       className="max-h-[90vh] max-w-[700px] overflow-y-auto"
     >
       <form onSubmit={handleSubmit}>
+        {countryError && (
+          <div
+            role="alert"
+            className="mx-5 mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 sm:mx-6"
+          >
+            {countryError}
+          </div>
+        )}
+
         {/* Header */}
 
         <header className="border-b border-gray-200 px-5 py-5 sm:px-6">
