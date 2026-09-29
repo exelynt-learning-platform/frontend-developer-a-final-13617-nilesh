@@ -3,7 +3,6 @@ import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 const ErrorFallback = ({ resetErrorBoundary }) => {
   const handleReload = () => {
     resetErrorBoundary();
-    window.location.reload();
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useModal } from '@src/hooks/useModal';
 import { getSafeErrorMessage } from '@src/utils/errorMessage';
 import SearchInput from '@src/components/form/input/SearchInput';
@@ -37,17 +37,19 @@ import { toast } from 'react-toastify';
 const EmployeeManagement = () => {
   const dispatch = useDispatch();
 
-  const {
-    employees,
-    loading,
-    error,
-    selectedEmployee,
-    searchLoading,
-    searchResult,
-    searchError,
-    mutationLoading,
-    mutationError,
-  } = useSelector((state) => state.employee);
+  const employees = useSelector((state) => state.employee.employees);
+  const loading = useSelector((state) => state.employee.loading);
+  const error = useSelector((state) => state.employee.error);
+  const selectedEmployee = useSelector(
+    (state) => state.employee.selectedEmployee,
+  );
+  const searchLoading = useSelector((state) => state.employee.searchLoading);
+  const searchResult = useSelector((state) => state.employee.searchResult);
+  const searchError = useSelector((state) => state.employee.searchError);
+  const mutationLoading = useSelector(
+    (state) => state.employee.mutationLoading,
+  );
+  const mutationError = useSelector((state) => state.employee.mutationError);
 
   const { isOpen, openModal, closeModal } = useModal();
   const [mode, setMode] = useState('add');
@@ -81,6 +83,8 @@ const EmployeeManagement = () => {
 
   const handleOpenAdd = () => {
     dispatch(clearMutationError());
+    dispatch(clearSelectedEmployee());
+    dispatch(clearEmployeeSearch());
 
     setEmployeeForEdit(null);
     setMode('add');
@@ -105,6 +109,7 @@ const EmployeeManagement = () => {
     if (mutationLoading) return;
 
     dispatch(clearMutationError());
+    dispatch(clearSelectedEmployee());
 
     setEmployeeForEdit(null);
     setMode('add');
@@ -176,23 +181,23 @@ const EmployeeManagement = () => {
 
   const isIdSearch = /^\d+$/.test(query);
 
-  const displayedEmployees = !query
-    ? employees
-    : isIdSearch
-      ? searchResult
-        ? [searchResult]
-        : []
-      : employees.filter((employee) =>
-          employee.name?.toLowerCase().includes(query.toLowerCase()),
-        );
+  const displayedEmployees = useMemo(() => {
+    if (!query) {
+      return employees;
+    }
 
-  let emptyStateMessage = 'No employees available.';
+    if (isIdSearch) {
+      return searchResult ? [searchResult] : [];
+    }
 
-  if (searchLoading) {
-    emptyStateMessage = 'Searching...';
-  } else if (searchQuery.trim()) {
-    emptyStateMessage = `No employee found for id or name "${searchQuery.trim()}"`;
-  }
+    return employees.filter((employee) =>
+      employee.name?.toLowerCase().includes(query.toLowerCase()),
+    );
+  }, [employees, searchResult, query, isIdSearch]);
+
+  const emptyStateMessage = isIdSearch
+    ? searchError || `No employee found for id "${query}".`
+    : 'No employee found for id or name.';
 
   const handleSearch = (value) => {
     setSearchQuery(value);
