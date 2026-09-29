@@ -36,8 +36,15 @@ import { toast } from 'react-toastify';
 const EmployeeManagement = () => {
   const dispatch = useDispatch();
 
-  const { employees, loading, error, selectedEmployee, mutationLoading } =
-    useSelector((state) => state.employee);
+  const {
+    employees,
+    loading,
+    error,
+    selectedEmployee,
+    searchLoading,
+    searchError,
+    mutationLoading,
+  } = useSelector((state) => state.employee);
 
   const { isOpen, openModal, closeModal } = useModal();
   const [mode, setMode] = useState('add');
@@ -187,6 +194,23 @@ const EmployeeManagement = () => {
     return employeeId.includes(query) || employeeName.includes(query);
   });
 
+  const handleSearch = async (value) => {
+    setSearchQuery(value);
+
+    const query = value.trim();
+
+    if (!query) {
+      dispatch(clearSelectedEmployee());
+      dispatch(fetchEmployees());
+      return;
+    }
+
+    // ID search
+    if (/^\d+$/.test(query)) {
+      dispatch(fetchEmployeeById(query));
+    }
+  };
+
   return (
     <>
       <div className="w-full">
@@ -211,7 +235,7 @@ const EmployeeManagement = () => {
               <SearchInput
                 placeholder="Search employee"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="w-full sm:w-[237px] bg-[#E2E8F0] text-black"
               />
 
@@ -267,13 +291,32 @@ const EmployeeManagement = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {displayedEmployees.length === 0 ? (
+                  {searchLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="p-0">
+                        <div className="flex h-[160px] w-full items-center justify-center">
+                          <LoadingSpinner />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : searchError ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="p-0">
+                        <div className="flex h-[160px] w-full items-center justify-center">
+                          <p className="text-sm text-gray-500">
+                            No employee found for id or name "
+                            {searchQuery.trim()}"
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : displayedEmployees.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="p-0">
                         <div className="flex h-[160px] w-full items-center justify-center">
                           <p className="text-sm text-gray-500">
                             {searchQuery.trim()
-                              ? `No employees found for "${searchQuery.trim()}"`
+                              ? `No employee found for "${searchQuery.trim()}"`
                               : 'No employees available.'}
                           </p>
                         </div>

@@ -46,7 +46,7 @@ export const Modal = ({
     : 'relative w-full rounded-2xl bg-white  dark:bg-gray-900';
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-99999 ">
+    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-[99999] ">
       {!isFullscreen && (
         <div
           className="fixed inset-0 h-full w-full bg-black bg-opacity-50 "
