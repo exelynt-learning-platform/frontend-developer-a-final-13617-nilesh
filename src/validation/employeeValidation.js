@@ -1,18 +1,19 @@
-import { isValidPhoneNumber } from 'react-phone-number-input';
-
-export const validateEmployeeForm = (formData) => {
+export const validateEmployeeForm = (formData = {}) => {
   const errors = {};
 
-  const name = formData.name.trim();
-  const email = formData.email.trim();
-  const mobile = formData.mobile.trim();
+  const name = String(formData.name ?? '').trim();
+  const email = String(formData.email ?? '').trim();
+  const mobile = String(formData.mobile ?? '').trim();
+  const country = String(formData.country ?? '').trim();
+  // const state = String(formData.state ?? '').trim();
+  // const district = String(formData.district ?? '').trim();
 
   if (!name) {
     errors.name = 'Name is required';
   } else if (name.length < 2) {
     errors.name = 'Name must be at least 2 characters';
-  } else if (name.length > 55) {
-    errors.name = 'Name must not exceed 55 characters';
+  } else if (name.length > 50) {
+    errors.name = 'Name must not exceed 50 characters';
   }
 
   if (!email) {
@@ -23,22 +24,26 @@ export const validateEmployeeForm = (formData) => {
     errors.email = 'Email must not exceed 100 characters';
   }
 
-  if (!formData.mobile) {
+  if (!mobile) {
     errors.mobile = 'Mobile number is required';
-  } else if (!isValidPhoneNumber(formData.mobile)) {
-    errors.mobile = 'Enter a valid mobile number';
+  } else if (!/^\d{10}$/.test(mobile)) {
+    errors.mobile = 'Mobile number must be 10 digits';
   }
 
-  if (!formData.country) {
+  if (!country) {
     errors.country = 'Country is required';
   }
 
-  // if (!formData.state) {
+  // if (!state) {
   //   errors.state = 'State is required';
+  // } else if (state.length > 50) {
+  //   errors.state = 'State must not exceed 50 characters';
   // }
 
-  // if (!formData.district) {
+  // if (!district) {
   //   errors.district = 'District is required';
+  // } else if (district.length > 50) {
+  //   errors.district = 'District must not exceed 50 characters';
   // }
 
   return errors;
