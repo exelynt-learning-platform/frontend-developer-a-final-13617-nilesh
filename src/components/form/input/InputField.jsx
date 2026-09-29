@@ -14,12 +14,12 @@ const Input = ({
   min,
   max,
   step,
-
   pattern,
   maxLength,
   disabled = false,
   success = false,
   error = false,
+  readOnly = false,
   hint,
 }) => {
   let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30  ${className}`;
@@ -54,7 +54,7 @@ const Input = ({
         pattern={pattern}
         maxLength={maxLength}
         disabled={disabled}
-        readOnly={!onChange}
+        readOnly={readOnly}
         className={inputClasses}
       />
 
