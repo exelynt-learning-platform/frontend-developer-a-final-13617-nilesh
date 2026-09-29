@@ -26,7 +26,7 @@ import { fetchCountries } from '@src/redux/store/country/countryThunks';
 import {
   clearMutationError,
   clearSelectedEmployee,
-  clearSearchError,
+  clearEmployeeSearch,
 } from '@src/redux/store/employee/employeeSlice';
 
 import { Employee, DeleteEmployeeModal } from '@src/components/Employee/Modal';
@@ -176,7 +176,6 @@ const EmployeeManagement = () => {
       : employees.filter((employee) =>
           employee.name?.toLowerCase().includes(query.toLowerCase()),
         );
-        
 
   const handleSearch = (value) => {
     setSearchQuery(value);
@@ -184,15 +183,17 @@ const EmployeeManagement = () => {
     const query = value.trim();
 
     if (!query) {
-      dispatch(clearSelectedEmployee());
-      dispatch(clearSearchError());
+      dispatch(clearEmployeeSearch());
       return;
     }
 
-    // Numeric query = Employee ID search
     if (/^\d+$/.test(query)) {
+      dispatch(clearEmployeeSearch());
       dispatch(fetchEmployeeById(query));
+      return;
     }
+
+    dispatch(clearEmployeeSearch());
   };
 
   return (

@@ -38,6 +38,12 @@ const employeeSlice = createSlice({
       state.searchError = null;
     },
 
+    clearEmployeeSearch: (state) => {
+      state.searchResult = null;
+      state.searchError = null;
+      state.searchLoading = false;
+    },
+
     clearEmployeeError: (state) => {
       state.error = null;
     },
@@ -87,7 +93,8 @@ const employeeSlice = createSlice({
       .addCase(fetchEmployeeById.rejected, (state, action) => {
         state.searchLoading = false;
         state.searchResult = null;
-        state.searchError = action.payload || 'Unable to search employee. Please try again.';
+        state.searchError =
+          action.payload || 'Unable to search employee. Please try again.';
       });
 
     // ADD EMPLOYEE
@@ -171,6 +178,7 @@ const employeeSlice = createSlice({
 
 export const {
   clearSelectedEmployee,
+  clearEmployeeSearch,
   clearEmployeeError,
   clearSearchError,
   clearMutationError,
