@@ -5,8 +5,8 @@ export const validateEmployeeForm = (formData = {}) => {
   const email = String(formData.email ?? '').trim();
   const mobile = String(formData.mobile ?? '').trim();
   const country = String(formData.country ?? '').trim();
-  // const state = String(formData.state ?? '').trim();
-  // const district = String(formData.district ?? '').trim();
+  const state = String(formData.state ?? '').trim();
+  const district = String(formData.district ?? '').trim();
 
   if (!name) {
     errors.name = 'Name is required';
@@ -34,17 +34,13 @@ export const validateEmployeeForm = (formData = {}) => {
     errors.country = 'Country is required';
   }
 
-  // if (!state) {
-  //   errors.state = 'State is required';
-  // } else if (state.length > 50) {
-  //   errors.state = 'State must not exceed 50 characters';
-  // }
+  if (!state) {
+    errors.state = 'State is required';
+  }
 
-  // if (!district) {
-  //   errors.district = 'District is required';
-  // } else if (district.length > 50) {
-  //   errors.district = 'District must not exceed 50 characters';
-  // }
+  if (!district) {
+    errors.district = 'District is required';
+  }
 
   return errors;
 };
