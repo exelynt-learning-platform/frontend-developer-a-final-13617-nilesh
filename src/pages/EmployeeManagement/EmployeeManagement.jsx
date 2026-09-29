@@ -76,6 +76,7 @@ const EmployeeManagement = () => {
 
   const handleOpenAdd = () => {
     dispatch(clearMutationError());
+    dispatch(clearSelectedEmployee());
 
     setMode('add');
     openModal();
@@ -174,14 +175,6 @@ const EmployeeManagement = () => {
     loading: countryLoading,
     error: countryError,
   } = useSelector((state) => state.country);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-[300px] items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
 
   const query = searchQuery.trim();
 
@@ -292,7 +285,15 @@ const EmployeeManagement = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {searchLoading ? (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="p-0">
+                        <div className="flex h-[160px] w-full items-center justify-center">
+                          <LoadingSpinner />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : searchLoading ? (
                     <TableRow>
                       <TableCell colSpan={5} className="p-0">
                         <div className="flex h-[160px] w-full items-center justify-center">
