@@ -26,6 +26,7 @@ import { fetchCountries } from '@src/redux/store/country/countryThunks';
 import {
   clearMutationError,
   clearSelectedEmployee,
+  clearSearchError,
 } from '@src/redux/store/employee/employeeSlice';
 
 import { Employee, DeleteEmployeeModal } from '@src/components/Employee/Modal';
@@ -182,30 +183,30 @@ const EmployeeManagement = () => {
     );
   }
 
-  const displayedEmployees = employees.filter((employee) => {
-    const query = searchQuery.trim().toLowerCase();
+  const query = searchQuery.trim();
 
-    if (!query) {
-      return true;
-    }
+  const displayedEmployees = !query
+    ? employees
+    : /^\d+$/.test(query)
+      ? selectedEmployee
+        ? [selectedEmployee]
+        : []
+      : employees.filter((employee) =>
+          employee.name?.toLowerCase().includes(query.toLowerCase()),
+        );
 
-    const employeeId = employee.id?.toString().toLowerCase() || '';
-    const employeeName = employee.name?.toLowerCase() || '';
-    return employeeId.includes(query) || employeeName.includes(query);
-  });
-
-  const handleSearch = async (value) => {
+  const handleSearch = (value) => {
     setSearchQuery(value);
 
     const query = value.trim();
 
     if (!query) {
       dispatch(clearSelectedEmployee());
-      dispatch(fetchEmployees());
+      dispatch(clearSearchError());
       return;
     }
 
-    // ID search
+    // Numeric query = Employee ID search
     if (/^\d+$/.test(query)) {
       dispatch(fetchEmployeeById(query));
     }
@@ -236,7 +237,7 @@ const EmployeeManagement = () => {
                 placeholder="Search employee"
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="w-full sm:w-[237px] bg-[#E2E8F0] text-black"
+                className="w-full bg-[#E2E8F0] text-black sm:w-[237px]"
               />
 
               <Button
@@ -299,24 +300,13 @@ const EmployeeManagement = () => {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : searchError ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="p-0">
-                        <div className="flex h-[160px] w-full items-center justify-center">
-                          <p className="text-sm text-gray-500">
-                            No employee found for id or name "
-                            {searchQuery.trim()}"
-                          </p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
                   ) : displayedEmployees.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="p-0">
                         <div className="flex h-[160px] w-full items-center justify-center">
                           <p className="text-sm text-gray-500">
-                            {searchQuery.trim()
-                              ? `No employee found for "${searchQuery.trim()}"`
+                            {query
+                              ? `No employee found for id or name "${query}"`
                               : 'No employees available.'}
                           </p>
                         </div>
